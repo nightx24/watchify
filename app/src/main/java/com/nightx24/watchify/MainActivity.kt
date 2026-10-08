@@ -18,18 +18,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -80,10 +76,7 @@ fun WatchifyApp() {
     val favorites = remember { mutableStateOf(setOf<String>()) }
 
     if (selectedSite != null) {
-        BrowserScreen(
-            site = selectedSite!!,
-            onBack = { selectedSite = null }
-        )
+        BrowserScreen(site = selectedSite!!, onBack = { selectedSite = null })
         return
     }
 
@@ -100,10 +93,7 @@ fun WatchifyApp() {
                     title = {
                         Column {
                             Text("Watchify")
-                            Text(
-                                "Your entertainment hub",
-                                style = MaterialTheme.typography.labelSmall
-                            )
+                            Text("Your entertainment hub", style = MaterialTheme.typography.labelSmall)
                         }
                     }
                 )
@@ -121,19 +111,15 @@ fun WatchifyApp() {
                     onValueChange = { query = it },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
+                    leadingIcon = { Text("⌕", style = MaterialTheme.typography.titleLarge) },
                     placeholder = { Text("Search sites") },
                     shape = RoundedCornerShape(18.dp)
                 )
 
                 Spacer(Modifier.height(12.dp))
-
-                androidx.compose.foundation.lazy.LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(categories.size) { index ->
-                        val item = categories[index]
-                        androidx.compose.material3.FilterChip(
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    items(categories) { item ->
+                        FilterChip(
                             selected = category == item,
                             onClick = { category = item },
                             label = { Text(item) }
@@ -142,7 +128,6 @@ fun WatchifyApp() {
                 }
 
                 Spacer(Modifier.height(12.dp))
-
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(minSize = 160.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -197,10 +182,7 @@ private fun SiteCard(
                             .height(48.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            site.name.take(1),
-                            style = MaterialTheme.typography.titleLarge
-                        )
+                        Text(site.name.take(1), style = MaterialTheme.typography.titleLarge)
                     }
                 }
                 Spacer(Modifier.width(10.dp))
@@ -209,9 +191,9 @@ private fun SiteCard(
                     Text(site.category, style = MaterialTheme.typography.labelMedium)
                 }
                 IconButton(onClick = onFavorite) {
-                    Icon(
-                        if (favorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = if (favorite) "Remove favorite" else "Add favorite"
+                    Text(
+                        if (favorite) "♥" else "♡",
+                        style = MaterialTheme.typography.titleLarge
                     )
                 }
             }
@@ -219,7 +201,7 @@ private fun SiteCard(
             Text(site.description, style = MaterialTheme.typography.bodySmall)
             Spacer(Modifier.height(8.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Star, contentDescription = null)
+                Text("★", style = MaterialTheme.typography.labelLarge)
                 Spacer(Modifier.width(4.dp))
                 Text("Open in Watchify", style = MaterialTheme.typography.labelLarge)
             }
@@ -236,7 +218,7 @@ private fun BrowserScreen(site: MediaSite, onBack: () -> Unit) {
                 title = { Text(site.name) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Text("‹", style = MaterialTheme.typography.headlineMedium)
                     }
                 }
             )
